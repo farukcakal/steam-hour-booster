@@ -48,10 +48,10 @@ client.on('error', (err) => {
 });
 
 const startGame = (client) => {
-    client.playingState = {
-        blocked: false,
-        appid: [gameId]
-    }
+    // client.playingState = {
+    //     blocked: false,
+    //     appid: [gameId]
+    // }
 
     client.setPersona(SteamUser.EPersonaState.Online)
 
@@ -59,10 +59,10 @@ const startGame = (client) => {
 }
 
 const stopGame = (client) => {
-    client.playingState = {
-        blocked: false,
-        appid: []
-    }
+    // client.playingState = {
+    //     blocked: false,
+    //     appid: []
+    // }
 
     client.setPersona(SteamUser.EPersonaState.Offline)
 
