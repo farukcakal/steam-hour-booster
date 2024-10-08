@@ -7,30 +7,30 @@ const username = process.env.STEAM_USERNAME;
 const password = process.env.STEAM_PASSWORD;
 const gameId = process.env.STEAM_GAME_ID;
 
-// Giriş yaparken beklenen Steam Guard kodunu al
 client.logOn({
     accountName: username,
     password: password
 });
 
-// Oturum açma işlemi başarılı olduğunda
 client.on('loggedOn', () => {
     console.log('Giriş yapıldı!');
-
-    // Kullanıcıyı çevrimiçi olarak ayarlayın
     
-    client.playingState = {
-        blocked: false,
-        appid: [gameId]
-    }
-
-    client.setPersona(SteamUser.EPersonaState.Online)
-
-    // Oyun başlatma işlemi
-    client.gamesPlayed([gameId]);
+    startGame(client);
 });
 
-// Steam Guard doğrulama kodu gerekli olduğunda
+client.on('chatMessage', (steamID, message) => {
+    console.log(`Gelen mesaj (${steamID}): ${message}`);
+
+    // Mesajı kontrol et
+    if (message.toLowerCase() === 'start') {
+        console.log('Oyun başlatılıyor...');
+        startGame()
+    } else if (message.toLowerCase() === 'stop') {
+        console.log('Oyun durduruluyor...');
+        stopGame()
+    }
+});
+
 client.on('newSession', (sessionID) => {
     console.log('Steam Guard kodu girin:');
     process.stdin.once('data', (data) => {
@@ -43,7 +43,28 @@ client.on('newSession', (sessionID) => {
     });
 });
 
-// Hata durumu
 client.on('error', (err) => {
     console.error('Hata: ', err);
 });
+
+const startGame = (client) => {
+    client.playingState = {
+        blocked: false,
+        appid: [gameId]
+    }
+
+    client.setPersona(SteamUser.EPersonaState.Online)
+
+    client.gamesPlayed([gameId]);
+}
+
+const stopGame = (client) => {
+    client.playingState = {
+        blocked: false,
+        appid: []
+    }
+
+    client.setPersona(SteamUser.EPersonaState.Offline)
+
+    client.gamesPlayed([]);
+}
