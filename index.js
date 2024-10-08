@@ -14,47 +14,40 @@ client.logOn({
 
 client.on('loggedOn', () => {
     console.log('Giriş yapıldı!');
-    
-    startGame(client); // Oyun başlat
+
+    client.setPersona(SteamUser.EPersonaState.Online); // Çevrimiçi ol
+    console.log('Çevrimiçi durumuna geçildi.');
 });
 
-client.on('chatMessage', (steamID, message) => {
+client.on('friendMessage', (steamID, message) => {
     console.log(`Gelen mesaj (${steamID}): ${message}`);
 
-    // Mesajı kontrol et
+    // Mesajı kontrol et ve komutları uygula
     if (message.toLowerCase() === 'start') {
         console.log('Oyun başlatılıyor...');
         startGame(client);
     } else if (message.toLowerCase() === 'stop') {
         console.log('Oyun durduruluyor...');
         stopGame(client);
+    } else {
+        console.log(`Bilinmeyen komut: ${message}`);
     }
-});
-
-client.on('newSession', (sessionID) => {
-    console.log('Steam Guard kodu girin:');
-    process.stdin.once('data', (data) => {
-        const steamGuardCode = data.toString().trim();
-        client.logOn({
-            accountName: username,
-            password: password,
-            twoFactorCode: steamGuardCode
-        });
-    });
 });
 
 client.on('error', (err) => {
     console.error('Hata: ', err);
 });
 
+// Oyun başlatma fonksiyonu
 const startGame = (client) => {
-    client.setPersona(SteamUser.EPersonaState.Online); // Çevrimiçi durumu ayarla
-
-    // Oyun bilgilerini ayarla
-    client.gamesPlayed([gameId]); // Oyun oynamaya başla
+    console.log('CS:GO başlatılıyor...');
+    client.gamesPlayed([gameId]); // Oyun başlat
+    client.setPersona(SteamUser.EPersonaState.Online); // Çevrimiçi durumu koru
 }
 
+// Oyun durdurma fonksiyonu
 const stopGame = (client) => {
-    client.setPersona(SteamUser.EPersonaState.Offline); // Çevrimdışı durumu ayarla
-    client.gamesPlayed([]); // Oyun oynamayı durdur
+    console.log('CS:GO durduruluyor...');
+    client.gamesPlayed([]); // Oyun durdur
+    client.setPersona(SteamUser.EPersonaState.Online); // Hala çevrimiçi ol
 }
