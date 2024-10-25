@@ -10,9 +10,6 @@ const password = process.env.STEAM_PASSWORD;
 const gameId = parseInt(process.env.STEAM_GAME_ID, 10);
 const allowedProfile = process.env.STEAM_ALLOWED_PROFILE;
 
-let gameTimer;
-const gameInterval = 3 * 60 * 60 * 1000; // 3 saatlik süreyi milisaniye olarak ayarla
-
 client.logOn({
     accountName: username,
     password: password
@@ -52,24 +49,16 @@ client.on('error', (err) => {
 
 // Oyun başlatma fonksiyonu
 const startGame = (client) => {
-    console.log('CS:GO başlatılıyor...');
+    console.log('Oyun başlatılıyor...');
     client.gamesPlayed([gameId]); // Oyun başlat
     client.setPersona(SteamUser.EPersonaState.Online); // Çevrimiçi durumu koru
-
-    clearTimeout(gameTimer);
-    gameTimer = setTimeout(() => {
-        console.log('3 saat doldu, oyun durduruluyor ve yeniden başlatılıyor...');
-        stopGame(client);
-        startGame(client);
-    }, gameInterval);
 }
 
 // Oyun durdurma fonksiyonu
 const stopGame = (client) => {
-    console.log('CS:GO durduruluyor...');
+    console.log('Oyun durduruluyor...');
     client.gamesPlayed([]); // Oyun durdur
     client.setPersona(SteamUser.EPersonaState.Online);
-    clearTimeout(gameTimer);
 }
 
 // Mesajları günlük dosyalara log tutma fonksiyonu
