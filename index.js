@@ -24,22 +24,26 @@ client.on('loggedOn', () => {
 
 client.on('friendMessage', (steamID, message) => {
     console.log(`Gelen mesaj (${steamID}): ${message}`);
-    
+
     // Mesajları log dosyasına yaz
     logMessage(steamID.getSteamID64(), message);
 
     if (steamID.getSteamID64() === allowedProfile) {
         if (message.toLowerCase() === 'start') {
             console.log('Oyun başlatılıyor...');
+            client.chatMessage(steamID, 'Oyun başlatılıyor...'); // Yanıt gönder
             startGame(client);
         } else if (message.toLowerCase() === 'stop') {
             console.log('Oyun durduruluyor...');
+            client.chatMessage(steamID, 'Oyun durduruluyor...'); // Yanıt gönder
             stopGame(client);
         } else {
             console.log(`Bilinmeyen komut: ${message}`);
+            client.chatMessage(steamID, 'Bu komut tanınmıyor. Geçerli komutlar: start, stop'); // Yanıt gönder
         }
     } else {
         console.log('Bu komut izin verilen profil dışında bir kullanıcıdan geldi, işlem yapılmadı.');
+        client.chatMessage(steamID, 'Bu komutu kullanma izniniz yok.'); // Yanıt gönder
     }
 });
 
